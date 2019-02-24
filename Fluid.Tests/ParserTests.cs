@@ -26,7 +26,7 @@ namespace Fluid.Tests
 
             Assert.Single(statements);
             Assert.NotNull(textStatement);
-            Assert.Equal("Hello World", textStatement.Text);
+            Assert.Equal("Hello World", textStatement.ToString());
         }
 
         [Fact]
@@ -68,7 +68,7 @@ namespace Fluid.Tests
             var statements = Parse(@"{% for a in b %};{% endfor %}");
             Assert.Single(statements);
             var text = ((ForStatement)statements[0]).Statements[0] as TextStatement;
-            Assert.Equal(";", text.Text);
+            Assert.Equal(";", text.ToString());
         }
 
         [Fact]
@@ -78,7 +78,7 @@ namespace Fluid.Tests
 
             Assert.Single(statements);
             Assert.IsType<TextStatement>(statements.ElementAt(0));
-            Assert.Equal(" on {{ this }} and {{{ that }}} ", (statements.ElementAt(0) as TextStatement).Text);
+            Assert.Equal(" on {{ this }} and {{{ that }}} ", (statements.ElementAt(0) as TextStatement).ToString());
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace Fluid.Tests
 
             Assert.Single(statements);
             Assert.IsType<TextStatement>(statements.ElementAt(0));
-            Assert.Equal(" {%if true%} {%endif%} ", (statements.ElementAt(0) as TextStatement).Text);
+            Assert.Equal(" {%if true%} {%endif%} ", (statements.ElementAt(0) as TextStatement).ToString());
         }
 
         [Fact]
@@ -142,30 +142,6 @@ namespace Fluid.Tests
             Assert.Single(ifStatement.Statements);
             Assert.NotNull(ifStatement.Else);
             Assert.NotNull(ifStatement.ElseIfs);
-        }
-
-        [Theory]
-        [InlineData("abc { def")]
-        [InlineData("abc } def")]
-        [InlineData("abc {{ def")]
-        [InlineData("abc }} def")]
-        [InlineData("abc {{ def }")]
-        [InlineData("abc { def }}")]
-        [InlineData("abc {% def")]
-        [InlineData("abc %} def")]
-        [InlineData("{% def")]
-        [InlineData("abc %}")]
-        [InlineData("%} def")]
-        [InlineData("abc {%")]
-        [InlineData("abc {{% def")]
-        [InlineData("abc }%} def")]
-        public void ShouldSucceedParseValidTemplate(string source)
-        {
-            var result = FluidTemplate.TryParse(source, out var template, out var errors);
-
-            Assert.True(result);
-            Assert.NotNull(template);
-            Assert.Empty(errors);
         }
 
         [Theory]
