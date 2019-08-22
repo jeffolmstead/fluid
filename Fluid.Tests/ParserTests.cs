@@ -214,7 +214,7 @@ def", "at line:2, col:6")]
   Wow, {{ username }}, you have a longish name!
 {% else %}
   Hello there!
-{% endif %}", "at line:3, col:25")]
+{% endif %}", "at line:2, col:20")]
         public void ShouldFailParseInvalidTemplateWithCorrectLineNumber(string source, string expectedErrorEndString)
         {
             var result = FluidTemplate.TryParse(source, out var template, out var errors);
@@ -308,6 +308,17 @@ def", "at line:2, col:6")]
         public void ShouldParseCurlyBraceInOutputStatements()
         {
             Parse("{{ 'on {0}' }}");
+        }
+
+        [Fact]
+        public void ShouldParseNonBreakingWhitespace()
+        {
+            var c = (char)160;
+
+            var result = FluidTemplate.TryParse("{{ 'a" + c + "' }}" + c + "{{ '" + c + "b' }}", out var template, out var errors);
+            var rendered = template.Render();
+
+            Assert.Equal("a" + c + c + c + "b", rendered);
         }
     }
 }

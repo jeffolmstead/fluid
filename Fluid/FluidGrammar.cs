@@ -182,5 +182,49 @@ namespace Fluid
             MarkPunctuation(Dot, TagStart, TagEnd, OutputStart, OutputEnd, Colon);
             MarkTransient(Statement, KnownTags, ForSource, RangeIndex, BinaryOperator, ForOption, Term);
         }
+
+        public override void SkipWhitespace(ISourceStream source)
+        {
+            while (!source.EOF())
+            {
+                if (UsesNewLine && IsLineTerminator(source.PreviewChar))
+                {
+                    return;
+                }
+
+                if (!IsWhiteSpace(source.PreviewChar))
+                {
+                    return;
+                }
+
+                source.PreviewPosition++;
+            }
+        }
+
+        public static bool IsLineTerminator(char ch)
+        {
+            return (ch == 10)
+                || (ch == 13)
+                || (ch == 0x2028) // line separator
+                || (ch == 0x2029) // paragraph separator
+                ;
+        }
+
+        public static bool IsWhiteSpace(char ch)
+        {
+            return (ch == 32) || // space
+                   (ch == 9) || // tab
+                   (ch == 0xB) ||
+                   (ch == 0xC) ||
+                   (ch == 0xA0) ||
+                   (ch >= 0x1680 && (
+                                        ch == 0x1680 ||
+                                        ch == 0x180E ||
+                                        (ch >= 0x2000 && ch <= 0x200A) ||
+                                        ch == 0x202F ||
+                                        ch == 0x205F ||
+                                        ch == 0x3000 ||
+                                        ch == 0xFEFF));
+        }
     }
 }
